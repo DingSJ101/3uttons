@@ -45,30 +45,54 @@ class mySolution(NewSolution):
         dest = [1,2,3,4,5,6]
         controls = [0,2]
         super().__init__(init,dest,controls)
-    def left(self, info) -> {}:
-        if info['controls'][0]:
-            if info['controls'][1] !=0:
-                info['controls'][1] -= 1
-                begin  = info['state'][info['controls'][1]]
-                info['state'][info['controls'][1]:info['controls'][1]+3] = info['state'][info['controls'][1]+1:info['controls'][1]+4]
-                info['state'][info['controls'][1]+3] = begin
+    def left(self,state,controls):
+        if controls[0]:
+            if controls[1] !=0:
+                controls[1] -= 1
+                begin  = state[controls[1]]
+                state[controls[1]:controls[1]+3] = state[controls[1]+1:controls[1]+4]
+                state[controls[1]+3] = begin
         else:
-            info['controls'][1] = max(info['controls'][1]-1,0)
-        return info
-    def right(self, info) -> {}:
-        if info['controls'][0]:
-            if info['controls'][1] !=3:
-                info['controls'][1] += 1
-                end = info['state'][info['controls'][1]+2]
+            controls[1] = max(controls[1]-1,0)
+        return state,controls
+    def right(self,state,controls):
+        if controls[0]:
+            if controls[1] !=3:
+                controls[1] += 1
+                end = state[controls[1]+2]
 
-                info['state'][info['controls'][1]:info['controls'][1]+3] = info['state'][info['controls'][1]-1:info['controls'][1]+2]
-                info['state'][info['controls'][1]-1] = end
+                state[controls[1]:controls[1]+3] = state[controls[1]-1:controls[1]+2]
+                state[controls[1]-1] = end
         else:
-            info['controls'][1] = min(info['controls'][1] +1 ,3)
-        return info
-    def middle(self, info) -> {}:
-        info['controls'][0] = 1-info['controls'][0]
-        return info
+            controls[1] = min(controls[1] +1 ,3)
+        return state,controls
+    def middle(self,state,controls):
+        controls[0] = 1-controls[0]
+        return state,controls
+    # def left(self, info) -> {}:
+    #     if info['controls'][0]:
+    #         if info['controls'][1] !=0:
+    #             info['controls'][1] -= 1
+    #             begin  = info['state'][info['controls'][1]]
+    #             info['state'][info['controls'][1]:info['controls'][1]+3] = info['state'][info['controls'][1]+1:info['controls'][1]+4]
+    #             info['state'][info['controls'][1]+3] = begin
+    #     else:
+    #         info['controls'][1] = max(info['controls'][1]-1,0)
+    #     return info
+    # def right(self, info) -> {}:
+    #     if info['controls'][0]:
+    #         if info['controls'][1] !=3:
+    #             info['controls'][1] += 1
+    #             end = info['state'][info['controls'][1]+2]
+
+    #             info['state'][info['controls'][1]:info['controls'][1]+3] = info['state'][info['controls'][1]-1:info['controls'][1]+2]
+    #             info['state'][info['controls'][1]-1] = end
+    #     else:
+    #         info['controls'][1] = min(info['controls'][1] +1 ,3)
+    #     return info
+    # def middle(self, info) -> {}:
+    #     info['controls'][0] = 1-info['controls'][0]
+    #     return info
 
 if __name__ == '__main__':
     # multiprocessing.freeze_support()
@@ -76,4 +100,10 @@ if __name__ == '__main__':
     # # print(a.run(10))
     # a.run_with_processes(17)
     b = mySolution()
-    print(b.run(17))
+    step = b.addNewStep([6,3,5,2,4,1],[0,2],['m'])
+    step = b.move(step,'m')
+    step = b.move(step,'m')
+    step = b.move(step,'m')
+    
+    a = mySolution()
+    print(a.run(17))

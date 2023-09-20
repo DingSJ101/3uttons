@@ -137,13 +137,13 @@ class NewSolution:
         self.states:queue.Queue[Step] = queue.Queue()
         self.dest = dest_state
         self.map:Dict[Step,list] = {} # record the state
-        self.addNewStep(init_state,controls)
+        self.init_step = self.addNewStep(init_state,controls)
         
         pass
     def addNewStep(self,state:Union[Tuple,List],controls:Union[Tuple,List],path=[]):
         newStep  = Step({'state':state,'controls':controls},path)
         if newStep not in self.map \
-            or len(newStep.path) < len(self.map[newStep]):
+            or len(newStep.path) <= len(self.map[newStep]):
             self.map[newStep] = newStep.path
             self.states.put(newStep)
         return newStep
@@ -159,7 +159,7 @@ class NewSolution:
         return state,controls
     
     def judge(self,step:Step)->bool:
-        if step.info['state'] == self.dest:
+        if step.state == self.dest:
             print(step.path)
             return True
         return False
