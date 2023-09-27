@@ -1,5 +1,4 @@
 from base import NewSolution
-from game.base import Step
 class mySolution(NewSolution):
     def __init__(self) -> None:
         init = [0,4,7,2,
