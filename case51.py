@@ -17,7 +17,7 @@ class mySolution(NewSolution):
     from typing import Tuple
 
     def countBlocks(self,state)->Tuple[int]:
-        def count(state:list):
+        def count(state:list): # count blocks in a column
             cnt = 0
             for s in state:
                 if s!=0:cnt+=1
@@ -114,22 +114,25 @@ if __name__ == '__main__':
     b = mySolution()
     step = b.init_step
     def render(step):
-        s = step.state
+        s_list = list(step.state)
+        s = [-1,-1]+s_list[0:10]+[-1]+s_list[10:]
+        print(s)
         cases = ['︿','■■','﹀']
         res = ""
-        for i in range(5):
-            l,m,r = s[i],s[5+i],s[10+i]
+        col = 6
+        for i in range(col):
+            l,m,r = s[i],s[col+i],s[col*2+i]
             for _ in (l,m,r):
-                if _ == 0 :res += '——'
+                if _ == -1 :res += '  '
+                elif _ == 0 :res += '——'
                 elif _<4 : res += '\033[033m'+cases[_-1]+'\033[0m'
                 elif _<7 : res += '\033[031m'+cases[_-4]+'\033[0m'
                 else : res += '\033[032m'+cases[_-7]+'\033[0m'
             res+='\n'
         print(res)
     render(step)
-    render(b.move(step,'l'))
-    step = b.move(step,'rrrrlllrmrmrm')
-    render(step)
+    render(b.move(step,'lm'))
+    render(b.move(step,'rlmmmrrrrrrmmmmmrrrmllmlrlrmrmmllmrrl'))
     # step = b.move(step,'llllm')
     # render(step)
     c = mySolution()
@@ -138,11 +141,13 @@ if __name__ == '__main__':
     #     step = c.move(step,s)
     #     render(step)
     a = mySolution()
-    print(a.run(41)) # 41
+    print(a.run(37)) # 37
     # [
-    # 'l', 'r', 'm', 'l', 'm', 
-    # 'l', 'r', 'r', 'r', 'm', 
-    # 'r', 'l', 'l', 'l', 'r', 
-    # 'l', 'l', 'r', 'l', 'r', 
-    # 'r', 'r', 'l', 'm', 'm', 
-    # 'l', 'l', 'm']
+    # 'r', 'l', 'm', 'm', 'm', 
+    # 'r', 'r', 'r', 'r', 'r', 
+    # 'r', 'm', 'm', 'm', 'm', 
+    # 'm', 'r', 'r', 'r', 'm', 
+    # 'l', 'l', 'm', 'l', 'r', 
+    # 'l', 'r', 'm', 'r', 'm', 
+    # 'm', 'l', 'l', 'm', 'r', 
+    # 'r', 'l']

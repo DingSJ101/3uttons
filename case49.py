@@ -128,8 +128,8 @@ if __name__ == '__main__':
             res+='\n'
         print(res)
     render(step)
-    render(b.move(step,'l'))
-    # step = b.move(step,'rrrrlllrmrmrm')
+    # render(b.move(step,'l'))
+    step = b.move(step,'rrrrrrrrr')
     # render(step)
     # step = b.move(step,'llllm')
     # render(step)
@@ -139,5 +139,10 @@ if __name__ == '__main__':
         step = c.move(step,s)
         render(step)
     a = mySolution()
-    print(a.run(24)) # 41
-    # ['m', 'm', 'l', 'r', 'r', 'm', 'l', 'r', 'l', 'l', 'm', 'l', 'l', 'r', 'm', 'l', 'r', 'l', 'm', 'm', 'l', 'l', 'm']
+    print(a.run(23)) # 41
+    # [
+    # 'm', 'm', 'l', 'r', 'r', 
+    # 'm', 'l', 'r', 'l', 'l', 
+    # 'm', 'l', 'l', 'r', 'm', 
+    # 'l', 'r', 'l', 'm', 'm', 
+    # 'l', 'l', 'm']

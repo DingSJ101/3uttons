@@ -1,6 +1,7 @@
 import queue,itertools,time
 from  multiprocessing import Pool
 from typing import List,Tuple,Dict,Union
+from heapq import heappop, heappush, heapify
 
 class task:
     def __init__(self) -> None:
@@ -111,7 +112,7 @@ class Solution:
             print("[============   time = %-5fs,cnt = %-10d ============]\n"%(round(time_used,3),cnt))
 
 class Step:
-    def __init__(self,info = {'state':Union[Tuple,List],'controls':Union[Tuple,List]},path = []) -> None:
+    def __init__(self,info = {'state':Union[Tuple,List],'controls':Union[Tuple,List]},path = [],matchs=0) -> None:
         if info == None:
             info = {'state':(),'controls':()}
         if isinstance(info['state'],list):
@@ -122,8 +123,12 @@ class Step:
         self.path = path
         self.__setattr__('state',self.info['state'])
         self.__setattr__('controls',self.info['controls'])
+        self.matchs = matchs
     def __eq__(self, other):
         return isinstance(other, Step) and self.info == other.info 
+    def __lt__(self, other):
+        # return len(self.path) > len(other.path)
+        return len(self.path)-self.matchs > len(other.path)-self.matchs
 
     def __hash__(self):
         # 使用info和path的哈希值来计算这个对象的哈希值
@@ -134,18 +139,30 @@ class NewSolution:
     def __init__(self,init_state =(),dest_state =(),controls = ()) -> None:
         if isinstance(dest_state,list):
             dest_state = tuple(dest_state)
+        self.cmp = False
+        if self.cmp:
+            self.steps = [] 
+            heapify(self.steps) 
         self.states:queue.Queue[Step] = queue.Queue()
         self.dest = dest_state
         self.map:Dict[Step,list] = {} # record the state
         self.init_step = self.addNewStep(init_state,controls)
+
         
-        pass
+    def rank(self,step:Step)->int:
+        return len(step.path)
+    def storeStep(self,step:Step):
+        heappush(self.steps,step)
+    def popStep(self):
+        return heappop(self.steps)
+
     def addNewStep(self,state:Union[Tuple,List],controls:Union[Tuple,List],path=[]):
-        newStep  = Step({'state':state,'controls':controls},path)
+        newStep  = Step({'state':state,'controls':controls},path,self.countMatchs(state))
         if newStep not in self.map \
             or len(newStep.path) <= len(self.map[newStep]):
             self.map[newStep] = newStep.path
             self.states.put(newStep)
+            if self.cmp:self.storeStep(newStep)
         return newStep
         
     def left(self,state:List,controls:List)->Tuple[List,List]:
@@ -163,6 +180,9 @@ class NewSolution:
             print(step.path)
             return True
         return False
+    def countMatchs(self,state):
+        count = 0
+        return count
     
     def move(self,step:Step,actions:str)->Step:
         state = list(step.info['state'])
@@ -179,23 +199,43 @@ class NewSolution:
     def run(self,k):
         length = 0
         cnt=0
-        print("[============          start  k = %-2d           ============]"%(length))
-        while(not self.states.empty()):
-            cnt+=1
-            step = self.states.get()
-            if len(step.path)>length:
-                print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
-                length = len(step.path)
-                print("[============          start  k = %-2d           ============]"%(length))
-                cnt = 0
-            if len(step.path)>k:
-                break
-            if self.judge(step):
-                continue
-            for action in ('l','m','r'):
-                self.move(step,action)
-        print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
 
+        if self.cmp:
+            while(self.steps):
+                step = self.popStep()
+                cnt+=1
+                if len(step.path) > len(self.map[step]): continue
+                if self.judge(step):
+                    print(cnt)
+                    continue
+                if len(step.path)>=k:
+                    continue
+                for action in ('l','m','r'):
+                    self.move(step,action)
+            print(cnt)
+        else:
+            print("[============          start  k = %-2d           ============]"%(length))
+            while(not self.states.empty()):
+                cnt+=1
+                step = self.states.get()
+                if len(step.path) > len(self.map[step]): continue
+                if len(step.path)>length:
+                    print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
+                    length = len(step.path)
+                    print("[============          start  k = %-2d           ============]"%(length))
+                    cnt = 0
+                if len(step.path)>k:
+                    break
+                if self.judge(step):
+                    continue
+                for action in ('l','m','r'):
+                    self.move(step,action)
+            print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
+        
+    class LinearEquations:
+        def __init__(self) -> None:
+            self.params = {}
+            self.init()
 
 if __name__ == "__main__":
     a = Step({'state':[1,2,3,4,5,6],'controls':[0,2]})
