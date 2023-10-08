@@ -232,10 +232,48 @@ class NewSolution:
                     self.move(step,action)
             print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
         
-    class LinearEquations:
-        def __init__(self) -> None:
-            self.params = {}
-            self.init()
+class LinearEquations:
+    def __init__(self,equations:List[List[float,]],vars:List[str] = []) -> None:
+        if len(equations) == 0:
+            self.params = [[1,2,3,0],[2,2,2,0],[3,1,2,0]]
+            # ax+by+cz=d
+        else:
+            self.params = equations
+        if len(vars) == 0:
+            self.vars = ['x','y','z'][:len(self.params[0])-1]
+        else:
+            self.vars = vars
+        self.solution = []
+    def __init__(self) -> None:
+        self.params = []
+        self.vars = []
+        self.solution = []
+    def addEquation(self,equation):
+        assert len(equation)-1 == len(self.vars)
+        self.params.append(equation)
+    def addEquations(self,equations):
+        for equation in equations:
+            self.addEquation(equation)
+    def addVars(self,vars:List[str]):
+        self.vars = vars
+
+    def solve(self)->List[float]:
+        # solve the linear equations
+        # return the value of each variable
+        import numpy as np
+        A = np.array(self.params)[:,:-1]
+        b = np.array(self.params)[:,-1]
+        self.solution =  np.linalg.solve(A,b).tolist()
+        return self.solution
+        
+    def __str__(self) -> str:
+        res = ""
+        for var ,param in zip(self.vars,self.params):
+            res += str(param[0]) +' x '+ var
+            for i in range(1,len(param)-1):
+                res += "+" + str(param[i]) +' x '+ self.vars[i]
+            res += "=" + str(param[-1]) + "\n"
+        return res
 
 if __name__ == "__main__":
     a = Step({'state':[1,2,3,4,5,6],'controls':[0,2]})
@@ -251,3 +289,6 @@ if __name__ == "__main__":
     e.run(1)
     f = NewSolution((1,2,3,4,5,6),[2,4,3,4,5,6],[1,2,3])
     f.run(4)
+
+    g = LinearEquations([[1.0,0,0,1.1],[0,1,0,2],[3,1,2,11]])
+    print(g.solve())

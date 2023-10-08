@@ -36,11 +36,16 @@ if __name__ == '__main__':
     # print(a.run(12))
     a = LinearEquations()
     a.addVars(['yellow','red','green'])
-    a.addEquations([[-1,1,0,-1],
-                    [1,1,-1,6],
-                    [1,-2,0,-3],
-                    # [-1,0,1,-2]
-                     ])
+    # a.addEquations([[-1,1,0,-1],
+    #                 [1,1,-1,6],
+    #                 [1,-2,0,-3],
+    #                 # [-1,0,1,-2]
+    #                  ])
+    a.addEquations(
+        [[1,-3,1,0],
+         [2,1,-1,21],
+         [-2,1,0,-16]]
+    )
     # a.addEquation([1,-1,0,0])
     print(a.solve())
     print(a)
