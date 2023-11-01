@@ -220,10 +220,10 @@ class NewSolution:
                 step = self.states.get()
                 if len(step.path) > len(self.map[step]): continue
                 if len(step.path)>length:
-                    print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt))
+                    print("[============   finish k = %-2d,cnt = %-10d ============]\n"%(length,cnt-1))
                     length = len(step.path)
                     print("[============          start  k = %-2d           ============]"%(length))
-                    cnt = 0
+                    cnt = 1
                 if len(step.path)>k:
                     break
                 if self.judge(step):
